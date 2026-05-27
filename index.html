@@ -3,263 +3,194 @@
 <head>
   <title>Rate My Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7f5;
-      color: #1f2933;
-    }
-
-    .hero {
-      background: linear-gradient(135deg, #dbeafe, #dcfce7);
-      padding: 60px 30px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 54px;
-      margin: 0;
-      color: #14532d;
-    }
-
-    .hero p {
-      font-size: 20px;
-      max-width: 750px;
-      margin: 18px auto;
-      line-height: 1.5;
-    }
-
-    .section {
-      max-width: 900px;
-      margin: 35px auto;
-      padding: 0 25px;
-    }
-
-    .box {
-      background: white;
-      border-radius: 22px;
-      padding: 28px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      margin-bottom: 25px;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      font-size: 16px;
-    }
-
-    textarea {
-      min-height: 120px;
-    }
-
-    button {
-      margin-top: 20px;
-      background: #14532d;
-      color: white;
-      padding: 14px 22px;
-      border: none;
-      border-radius: 999px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .message {
-      margin-top: 18px;
-      font-weight: bold;
-      color: #14532d;
-    }
-
-    .warning {
-      background: #fff7ed;
-      border-left: 5px solid #f97316;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 30px;
-      color: #64748b;
-    }
-  </style>
 </head>
 
-<body>
+<body style="font-family: Arial; padding: 40px; background:#f4f7f5;">
 
-  <div class="hero">
-    <h1>Rate My Admin</h1>
-    <p>
-      Anonymous teacher reviews of school leadership, workplace culture,
-      communication, support, fairness, and staff morale.
-    </p>
-  </div>
+<h1>Rate My Admin</h1>
+<p>Anonymous teacher reviews of school leadership and workplace culture.</p>
 
-  <div class="section">
+<hr>
 
-    <div class="box">
-      <h2>Submit a Review</h2>
-      <p>
-        Reviews are submitted as pending and will not appear publicly until approved.
-      </p>
+<h2>Browse Approved Reviews</h2>
 
-      <div class="warning">
-        Please keep reviews factual, professional, job-related, and based on your own experience.
-        Do not include student names, private personal information, threats, or unsupported accusations.
+<label>Choose District</label>
+<select id="districtFilter">
+  <option value="">Select a district</option>
+</select>
+
+<br><br>
+
+<label>Choose School</label>
+<select id="schoolFilter">
+  <option value="">Select a school</option>
+</select>
+
+<div id="reviewsList" style="margin-top:25px;"></div>
+
+<hr>
+
+<h2>Submit a Review</h2>
+
+<form id="reviewForm">
+  <input id="school_name" placeholder="School Name" required><br><br>
+  <input id="district_name" placeholder="District Name" required><br><br>
+
+  <select id="admin_role">
+    <option>Principal</option>
+    <option>Assistant Principal</option>
+    <option>District Administrator</option>
+  </select><br><br>
+
+  <input id="reviewer_role" placeholder="Your Role, ex: Current Teacher"><br><br>
+  <input id="relationship_to_school" placeholder="Relationship to School"><br><br>
+
+  <label>Support</label>
+  <select id="support_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select><br><br>
+
+  <label>Communication</label>
+  <select id="communication_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select><br><br>
+
+  <label>Fairness</label>
+  <select id="fairness_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select><br><br>
+
+  <label>Climate</label>
+  <select id="climate_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select><br><br>
+
+  <label>Workload Respect</label>
+  <select id="workload_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select><br><br>
+
+  <textarea id="written_review" placeholder="Write your review..." required></textarea><br><br>
+
+  <button type="submit">Submit Review</button>
+</form>
+
+<p id="message"></p>
+
+<script>
+const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_6jBBizQoWFQMax-n8NKt3w_z7YgscGm";
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let approvedReviews = [];
+
+async function loadReviews() {
+  const { data, error } = await client
+    .from("reviews")
+    .select("*")
+    .eq("approved", true)
+    .eq("moderation_status", "approved");
+
+  if (error) {
+    document.getElementById("reviewsList").innerHTML = "Could not load reviews.";
+    return;
+  }
+
+  approvedReviews = data || [];
+
+  const districts = [...new Set(approvedReviews.map(r => r.district_name))]
+    .sort((a,b) => a.localeCompare(b));
+
+  const districtFilter = document.getElementById("districtFilter");
+  districtFilter.innerHTML = '<option value="">Select a district</option>';
+
+  districts.forEach(district => {
+    const option = document.createElement("option");
+    option.value = district;
+    option.textContent = district;
+    districtFilter.appendChild(option);
+  });
+}
+
+function loadSchools() {
+  const selectedDistrict = document.getElementById("districtFilter").value;
+  const schoolFilter = document.getElementById("schoolFilter");
+
+  schoolFilter.innerHTML = '<option value="">Select a school</option>';
+  document.getElementById("reviewsList").innerHTML = "";
+
+  const schools = [...new Set(
+    approvedReviews
+      .filter(r => r.district_name === selectedDistrict)
+      .map(r => r.school_name)
+  )].sort((a,b) => a.localeCompare(b));
+
+  schools.forEach(school => {
+    const option = document.createElement("option");
+    option.value = school;
+    option.textContent = school;
+    schoolFilter.appendChild(option);
+  });
+}
+
+function showReviews() {
+  const district = document.getElementById("districtFilter").value;
+  const school = document.getElementById("schoolFilter").value;
+
+  const reviews = approvedReviews.filter(r =>
+    r.district_name === district && r.school_name === school
+  );
+
+  const reviewsList = document.getElementById("reviewsList");
+
+  if (reviews.length === 0) {
+    reviewsList.innerHTML = "<p>No approved reviews yet.</p>";
+    return;
+  }
+
+  reviewsList.innerHTML = reviews.map(r => {
+    const average = (
+      (r.support_rating + r.communication_rating + r.fairness_rating + r.climate_rating + r.workload_rating) / 5
+    ).toFixed(1);
+
+    return `
+      <div style="background:white; padding:22px; border-radius:18px; margin-bottom:18px; box-shadow:0 6px 18px rgba(0,0,0,.08);">
+        <h3>${r.school_name}</h3>
+        <p><strong>${r.district_name}</strong></p>
+        <p>Overall Rating: <strong>${average}/5</strong></p>
+        <p>Support: ${r.support_rating}/5 | Communication: ${r.communication_rating}/5 | Fairness: ${r.fairness_rating}/5</p>
+        <p>Climate: ${r.climate_rating}/5 | Workload Respect: ${r.workload_rating}/5</p>
+        <p><em>“${r.written_review}”</em></p>
+        <p style="color:#64748b;">Role: ${r.reviewer_role || "Not listed"}</p>
       </div>
+    `;
+  }).join("");
+}
 
-      <form id="reviewForm">
-        <label>School Name</label>
-        <input type="text" id="school_name" required>
+document.getElementById("districtFilter").addEventListener("change", loadSchools);
+document.getElementById("schoolFilter").addEventListener("change", showReviews);
 
-        <label>District Name</label>
-        <input type="text" id="district_name" required>
+document.getElementById("reviewForm").addEventListener("submit", async function(event) {
+  event.preventDefault();
 
-        <label>Admin Role</label>
-        <select id="admin_role" required>
-          <option value="Principal">Principal</option>
-          <option value="Assistant Principal">Assistant Principal</option>
-          <option value="District Administrator">District Administrator</option>
-          <option value="Instructional Coach / Lead">Instructional Coach / Lead</option>
-        </select>
+  const review = {
+    school_name: document.getElementById("school_name").value,
+    district_name: document.getElementById("district_name").value,
+    admin_role: document.getElementById("admin_role").value,
+    reviewer_role: document.getElementById("reviewer_role").value,
+    relationship_to_school: document.getElementById("relationship_to_school").value,
+    support_rating: Number(document.getElementById("support_rating").value),
+    communication_rating: Number(document.getElementById("communication_rating").value),
+    fairness_rating: Number(document.getElementById("fairness_rating").value),
+    climate_rating: Number(document.getElementById("climate_rating").value),
+    workload_rating: Number(document.getElementById("workload_rating").value),
+    written_review: document.getElementById("written_review").value,
+    approved: false,
+    moderation_status: "pending"
+  };
 
-        <label>Your Role</label>
-        <select id="reviewer_role">
-          <option value="Current Teacher">Current Teacher</option>
-          <option value="Former Teacher">Former Teacher</option>
-          <option value="Support Staff">Support Staff</option>
-          <option value="Other Educator">Other Educator</option>
-        </select>
+  const { error } = await client.from("reviews").insert([review]);
 
-        <label>Relationship to School</label>
-        <select id="relationship_to_school">
-          <option value="Currently employed">Currently employed</option>
-          <option value="Previously employed">Previously employed</option>
-          <option value="Interviewed there">Interviewed there</option>
-          <option value="Other professional experience">Other professional experience</option>
-        </select>
+  if (error) {
+    document.getElementById("message").innerText = "Something went wrong: " + error.message;
+  } else {
+    document.getElementById("message").innerText = "Review submitted! It is pending moderation.";
+    document.getElementById("reviewForm").reset();
+  }
+});
 
-        <label>Instructional Support Rating</label>
-        <select id="support_rating" required>
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Very Poor</option>
-        </select>
-
-        <label>Communication Rating</label>
-        <select id="communication_rating" required>
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Very Poor</option>
-        </select>
-
-        <label>Fairness & Professionalism Rating</label>
-        <select id="fairness_rating" required>
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Very Poor</option>
-        </select>
-
-        <label>School Climate Rating</label>
-        <select id="climate_rating" required>
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Very Poor</option>
-        </select>
-
-        <label>Workload Respect Rating</label>
-        <select id="workload_rating" required>
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Very Poor</option>
-        </select>
-
-        <label>Would you work here again?</label>
-        <select id="would_work_again">
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-
-        <label>Written Review</label>
-        <textarea id="written_review" required placeholder="Describe your professional experience with leadership at this school..."></textarea>
-
-        <label>
-          <input type="checkbox" id="agreement" required style="width:auto;">
-          I understand this review will be moderated before appearing publicly.
-        </label>
-
-        <button type="submit">Submit Review</button>
-
-        <div id="message" class="message"></div>
-      </form>
-    </div>
-
-  </div>
-
-  <footer>
-    Rate My Admin | Built for teacher voice and workplace transparency
-  </footer>
-
-  <script>
-    const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_6jBBizQoWFQMax-n8NKt3w_z7YgscGm";
-
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    document.getElementById("reviewForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-
-      const review = {
-        school_name: document.getElementById("school_name").value,
-        district_name: document.getElementById("district_name").value,
-        admin_role: document.getElementById("admin_role").value,
-        reviewer_role: document.getElementById("reviewer_role").value,
-        relationship_to_school: document.getElementById("relationship_to_school").value,
-        support_rating: Number(document.getElementById("support_rating").value),
-        communication_rating: Number(document.getElementById("communication_rating").value),
-        fairness_rating: Number(document.getElementById("fairness_rating").value),
-        climate_rating: Number(document.getElementById("climate_rating").value),
-        workload_rating: Number(document.getElementById("workload_rating").value),
-        would_work_again: document.getElementById("would_work_again").value === "true",
-        written_review: document.getElementById("written_review").value,
-        approved: false,
-        moderation_status: "pending"
-      };
-
-      const { error } = await client
-        .from("reviews")
-        .insert([review]);
-
-      if (error) {
-        document.getElementById("message").innerText = "Something went wrong: " + error.message;
-      } else {
-        document.getElementById("message").innerText = "Review submitted! It is now pending moderation.";
-        document.getElementById("reviewForm").reset();
-      }
-    });
-  </script>
+loadReviews();
+</script>
 
 </body>
 </html>
