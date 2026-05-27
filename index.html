@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Rate My Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     body {
       margin: 0;
@@ -12,78 +14,79 @@
 
     .hero {
       background: linear-gradient(135deg, #dbeafe, #dcfce7);
-      padding: 70px 30px;
+      padding: 60px 30px;
       text-align: center;
     }
 
     .hero h1 {
-      font-size: 56px;
+      font-size: 54px;
       margin: 0;
       color: #14532d;
     }
 
     .hero p {
-      font-size: 21px;
-      max-width: 700px;
-      margin: 20px auto;
+      font-size: 20px;
+      max-width: 750px;
+      margin: 18px auto;
       line-height: 1.5;
     }
 
-    .buttons {
-      margin-top: 28px;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 14px 22px;
-      margin: 8px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: bold;
-      background: #14532d;
-      color: white;
-    }
-
-    .button.secondary {
-      background: white;
-      color: #14532d;
-      border: 2px solid #14532d;
-    }
-
     .section {
-      max-width: 1000px;
+      max-width: 900px;
       margin: 35px auto;
       padding: 0 25px;
     }
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-    }
-
-    .card {
+    .box {
       background: white;
-      border-radius: 20px;
-      padding: 24px;
+      border-radius: 22px;
+      padding: 28px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
     }
 
-    .card h3 {
-      margin-top: 0;
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 120px;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #14532d;
+      color: white;
+      padding: 14px 22px;
+      border: none;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 18px;
+      font-weight: bold;
       color: #14532d;
     }
 
-    .review-box {
-      background: white;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    }
-
-    .rating {
-      font-size: 24px;
-      color: #f59e0b;
+    .warning {
+      background: #fff7ed;
+      border-left: 5px solid #f97316;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
     }
 
     footer {
@@ -100,66 +103,163 @@
     <h1>Rate My Admin</h1>
     <p>
       Anonymous teacher reviews of school leadership, workplace culture,
-      communication, support, and staff morale.
-    </p>
-
-    <div class="buttons">
-      <a href="#" class="button">Browse Reviews</a>
-      <a href="#" class="button secondary">Write a Review</a>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>Why This Exists</h2>
-    <p>
-      Teachers deserve honest, professional insight into school leadership before
-      accepting a position. Rate My Admin helps educators understand the climate,
-      communication, support, and leadership style inside a school.
+      communication, support, fairness, and staff morale.
     </p>
   </div>
 
   <div class="section">
-    <h2>What Teachers Can Rate</h2>
 
-    <div class="cards">
-      <div class="card">
-        <h3>Communication</h3>
-        <p>Is leadership clear, consistent, and timely?</p>
-      </div>
-
-      <div class="card">
-        <h3>Support</h3>
-        <p>Do teachers feel supported with students, families, and instruction?</p>
-      </div>
-
-      <div class="card">
-        <h3>Fairness</h3>
-        <p>Are policies and expectations applied professionally and consistently?</p>
-      </div>
-
-      <div class="card">
-        <h3>School Climate</h3>
-        <p>Does the building feel respectful, safe, collaborative, and healthy?</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>Sample Review</h2>
-
-    <div class="review-box">
-      <h3>Example Elementary School</h3>
-      <p class="rating">★★★★★</p>
+    <div class="box">
+      <h2>Submit a Review</h2>
       <p>
-        “Teachers reported strong communication, supportive leadership,
-        consistent expectations, and a positive school culture.”
+        Reviews are submitted as pending and will not appear publicly until approved.
       </p>
+
+      <div class="warning">
+        Please keep reviews factual, professional, job-related, and based on your own experience.
+        Do not include student names, private personal information, threats, or unsupported accusations.
+      </div>
+
+      <form id="reviewForm">
+        <label>School Name</label>
+        <input type="text" id="school_name" required>
+
+        <label>District Name</label>
+        <input type="text" id="district_name" required>
+
+        <label>Admin Role</label>
+        <select id="admin_role" required>
+          <option value="Principal">Principal</option>
+          <option value="Assistant Principal">Assistant Principal</option>
+          <option value="District Administrator">District Administrator</option>
+          <option value="Instructional Coach / Lead">Instructional Coach / Lead</option>
+        </select>
+
+        <label>Your Role</label>
+        <select id="reviewer_role">
+          <option value="Current Teacher">Current Teacher</option>
+          <option value="Former Teacher">Former Teacher</option>
+          <option value="Support Staff">Support Staff</option>
+          <option value="Other Educator">Other Educator</option>
+        </select>
+
+        <label>Relationship to School</label>
+        <select id="relationship_to_school">
+          <option value="Currently employed">Currently employed</option>
+          <option value="Previously employed">Previously employed</option>
+          <option value="Interviewed there">Interviewed there</option>
+          <option value="Other professional experience">Other professional experience</option>
+        </select>
+
+        <label>Instructional Support Rating</label>
+        <select id="support_rating" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Very Poor</option>
+        </select>
+
+        <label>Communication Rating</label>
+        <select id="communication_rating" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Very Poor</option>
+        </select>
+
+        <label>Fairness & Professionalism Rating</label>
+        <select id="fairness_rating" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Very Poor</option>
+        </select>
+
+        <label>School Climate Rating</label>
+        <select id="climate_rating" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Very Poor</option>
+        </select>
+
+        <label>Workload Respect Rating</label>
+        <select id="workload_rating" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Very Poor</option>
+        </select>
+
+        <label>Would you work here again?</label>
+        <select id="would_work_again">
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+
+        <label>Written Review</label>
+        <textarea id="written_review" required placeholder="Describe your professional experience with leadership at this school..."></textarea>
+
+        <label>
+          <input type="checkbox" id="agreement" required style="width:auto;">
+          I understand this review will be moderated before appearing publicly.
+        </label>
+
+        <button type="submit">Submit Review</button>
+
+        <div id="message" class="message"></div>
+      </form>
     </div>
+
   </div>
 
   <footer>
     Rate My Admin | Built for teacher voice and workplace transparency
   </footer>
+
+  <script>
+    const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_6jBBizQoWFQMax-n8NKt3w_z7YgscGm";
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.getElementById("reviewForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const review = {
+        school_name: document.getElementById("school_name").value,
+        district_name: document.getElementById("district_name").value,
+        admin_role: document.getElementById("admin_role").value,
+        reviewer_role: document.getElementById("reviewer_role").value,
+        relationship_to_school: document.getElementById("relationship_to_school").value,
+        support_rating: Number(document.getElementById("support_rating").value),
+        communication_rating: Number(document.getElementById("communication_rating").value),
+        fairness_rating: Number(document.getElementById("fairness_rating").value),
+        climate_rating: Number(document.getElementById("climate_rating").value),
+        workload_rating: Number(document.getElementById("workload_rating").value),
+        would_work_again: document.getElementById("would_work_again").value === "true",
+        written_review: document.getElementById("written_review").value,
+        approved: false,
+        moderation_status: "pending"
+      };
+
+      const { error } = await client
+        .from("reviews")
+        .insert([review]);
+
+      if (error) {
+        document.getElementById("message").innerText = "Something went wrong: " + error.message;
+      } else {
+        document.getElementById("message").innerText = "Review submitted! It is now pending moderation.";
+        document.getElementById("reviewForm").reset();
+      }
+    });
+  </script>
 
 </body>
 </html>
