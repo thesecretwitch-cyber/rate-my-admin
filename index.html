@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,146 @@
   <title>Rate My Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
-const SUPABASE_ANON_KEY = "PASTE_THE_ENTIRE_PUBLISHABLE_KEY_FROM_SUPABASE_HERE";
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #f7f1e8, #eef3ea);
+      margin: 0;
+      color: #2f2f2f;
+    }
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    header {
+      background: linear-gradient(135deg, #283618, #606c38);
+      color: white;
+      padding: 55px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 3rem;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      max-width: 760px;
+      margin: 15px auto 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 1050px;
+      margin: -25px auto 35px;
+      padding: 0 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      border: 1px solid rgba(96,108,56,0.15);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #283618;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      font-weight: 700;
+      color: #34401f;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px;
+      margin-top: 6px;
+      border-radius: 12px;
+      border: 1px solid #c8c2b8;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #fffdf9;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    button {
+      background: linear-gradient(135deg, #606c38, #283618);
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      margin-top: 20px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .review {
+      border-left: 6px solid #bc6c25;
+      padding: 18px;
+      margin-top: 18px;
+      background: #fffaf2;
+      border-radius: 14px;
+    }
+
+    .stars {
+      color: #bc6c25;
+      font-weight: bold;
+    }
+
+    .small {
+      font-size: 0.94rem;
+      color: #5f5f5f;
+      line-height: 1.5;
+    }
+
+    .success {
+      background: #e8f5e9;
+      color: #1b5e20;
+      padding: 13px;
+      border-radius: 12px;
+      display: none;
+      margin-top: 14px;
+    }
+
+    .error {
+      background: #fde8e8;
+      color: #842029;
+      padding: 13px;
+      border-radius: 12px;
+      display: none;
+      margin-top: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 28px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -137,11 +273,11 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     Rate My Admin | Reviews are moderated before public posting.
   </footer>
 
-<script>
-const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_6jBBizQoWFQMax-n8NKt3w_z7YgscGm";
+  <script>
+    const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_6jBBizQoWFQMax-n8NKt3w_z7YgscGm";
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const states = [
       "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
@@ -311,3 +447,4 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   </script>
 </body>
 </html>
+```
