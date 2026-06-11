@@ -1,287 +1,445 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rate My Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    body { margin:0; font-family:Arial,sans-serif; background:#f4f7f5; color:#1f2933; }
-    .hero { background:linear-gradient(135deg,#dbeafe,#dcfce7); padding:60px 25px; text-align:center; }
-    .hero h1 { font-size:54px; margin:0; color:#14532d; }
-    .hero p { font-size:20px; max-width:760px; margin:18px auto; line-height:1.5; }
-    .section { max-width:1000px; margin:35px auto; padding:0 25px; }
-    .box, .card { background:white; border-radius:22px; padding:26px; box-shadow:0 8px 22px rgba(0,0,0,.08); margin-bottom:22px; }
-    label { display:block; font-weight:bold; margin-top:14px; }
-    input, select, textarea { width:100%; box-sizing:border-box; padding:12px; margin-top:6px; border:1px solid #cbd5e1; border-radius:12px; font-size:16px; }
-    textarea { min-height:115px; }
-    button { background:#14532d; color:white; border:0; padding:14px 24px; border-radius:999px; font-weight:bold; margin-top:20px; cursor:pointer; }
-    .warning { background:#fff7ed; border-left:5px solid #f97316; padding:15px; border-radius:12px; margin:16px 0; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
-    .rating { color:#f59e0b; font-size:22px; }
-    .small { color:#64748b; font-size:14px; }
-    footer { text-align:center; padding:30px; color:#64748b; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f3ee;
+      margin: 0;
+      color: #2d2d2d;
+    }
+
+    header {
+      background: #283618;
+      color: white;
+      padding: 35px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.4rem;
+    }
+
+    header p {
+      max-width: 750px;
+      margin: 12px auto 0;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1050px;
+      margin: 30px auto;
+      padding: 0 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #283618;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #bbb;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      background: #606c38;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      margin-top: 18px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4f5b2e;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .review {
+      border-left: 5px solid #606c38;
+      padding: 15px;
+      margin-top: 15px;
+      background: #fafafa;
+      border-radius: 8px;
+    }
+
+    .stars {
+      color: #bc6c25;
+      font-weight: bold;
+    }
+
+    .small {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .success {
+      background: #e6f4ea;
+      color: #1e5e2f;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      margin-top: 12px;
+    }
+
+    .error {
+      background: #fde8e8;
+      color: #842029;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      margin-top: 12px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="hero">
+  <header>
     <h1>Rate My Admin</h1>
-    <p>Anonymous teacher reviews of school leadership, workplace culture, communication, fairness, support, and staff morale.</p>
-  </div>
+    <p>
+      A place for teachers, staff, and families to share honest feedback about school leadership,
+      campus culture, communication, transparency, and support.
+    </p>
+  </header>
 
-  <div class="section">
-    <div class="box">
-      <h2>Browse Approved Reviews</h2>
-
-      <label>Choose District</label>
-      <select id="districtFilter">
-        <option value="">Select a district</option>
-      </select>
-
-      <label>Choose School</label>
-      <select id="schoolFilter">
-        <option value="">Select a school</option>
-      </select>
-
-      <div id="reviewsList" style="margin-top:22px;"></div>
-    </div>
-
-    <div class="box">
+  <main>
+    <section class="card">
       <h2>Submit a Review</h2>
-      <p>Reviews are submitted as pending and will not appear publicly until approved.</p>
-
-      <div class="warning">
-        Please keep reviews factual, professional, job-related, and based on your own experience. Do not include student names, private personal information, threats, or unsupported accusations.
-      </div>
+      <p class="small">
+        Select your state, then enter your district and school. Once submitted, that district and school
+        will be saved into the site database for future use.
+      </p>
 
       <form id="reviewForm">
-        <label>District</label>
-        <select id="district_name" required></select>
-
-        <label>School / Building Name</label>
-        <input type="text" id="school_name" placeholder="Example: Lakewood Elementary" required>
-
         <div class="grid">
           <div>
-            <label>Principal/Admin First Name</label>
-            <input type="text" id="admin_first_name" required>
+            <label for="state">State</label>
+            <select id="state" required>
+              <option value="">Select a state</option>
+            </select>
           </div>
+
           <div>
-            <label>Principal/Admin Last Name</label>
-            <input type="text" id="admin_last_name" required>
+            <label for="reviewer_role">I am a...</label>
+            <select id="reviewer_role" required>
+              <option value="">Select one</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Parent">Parent</option>
+              <option value="Staff Member">Staff Member</option>
+              <option value="Former Employee">Former Employee</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
         </div>
 
-        <label>Admin Role</label>
-        <select id="admin_role" required>
-          <option>Principal</option>
-          <option>Assistant Principal</option>
-          <option>District Administrator</option>
-          <option>Instructional Coach / Lead</option>
-        </select>
-
-        <label>Your Role</label>
-        <select id="reviewer_role">
-          <option>Current Teacher</option>
-          <option>Former Teacher</option>
-          <option>Support Staff</option>
-          <option>Other Educator</option>
-        </select>
-
-        <label>Relationship to School</label>
-        <select id="relationship_to_school">
-          <option>Currently employed</option>
-          <option>Previously employed</option>
-          <option>Interviewed there</option>
-          <option>Other professional experience</option>
-        </select>
-
-        <label>Years Worked There</label>
-        <input type="text" id="years_worked_there" placeholder="Example: 2023–2026 or 3 years">
-
         <div class="grid">
-          <div><label>Support</label><select id="support_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
-          <div><label>Communication</label><select id="communication_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
-          <div><label>Fairness</label><select id="fairness_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
-          <div><label>Climate</label><select id="climate_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
-          <div><label>Workload</label><select id="workload_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
+          <div>
+            <label for="district_name">School District</label>
+            <input id="district_name" list="districtList" placeholder="Example: Little Rock School District" required />
+            <datalist id="districtList"></datalist>
+          </div>
+
+          <div>
+            <label for="school_name">School Name</label>
+            <input id="school_name" list="schoolList" placeholder="Example: Bale Elementary School" required />
+            <datalist id="schoolList"></datalist>
+          </div>
         </div>
 
-        <label>Would you work here again?</label>
-        <select id="would_work_again">
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
+        <div class="grid">
+          <div>
+            <label for="admin_first_name">Administrator First Name</label>
+            <input id="admin_first_name" required />
+          </div>
 
-        <label>Written Review</label>
-        <textarea id="written_review" required placeholder="Describe your professional experience with leadership at this school..."></textarea>
+          <div>
+            <label for="admin_last_name">Administrator Last Name</label>
+            <input id="admin_last_name" required />
+          </div>
+        </div>
 
-        <label>
-          <input type="checkbox" id="agreement" required style="width:auto;">
-          I understand this review will be moderated before appearing publicly.
-        </label>
+        <div class="grid">
+          <div>
+            <label for="years_known">Years Worked With/Known Administrator</label>
+            <input id="years_known" placeholder="Example: 1 year, 3 years, current year" />
+          </div>
+
+          <div>
+            <label for="rating">Overall Rating</label>
+            <select id="rating" required>
+              <option value="">Select rating</option>
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Good</option>
+              <option value="3">3 - Average</option>
+              <option value="2">2 - Poor</option>
+              <option value="1">1 - Very Poor</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="review_text">Review</label>
+        <textarea id="review_text" placeholder="Share your experience respectfully and honestly." required></textarea>
 
         <button type="submit">Submit Review</button>
-        <p id="message"></p>
+
+        <div id="successMessage" class="success">
+          Thank you! Your review has been submitted and is pending approval.
+        </div>
+
+        <div id="errorMessage" class="error">
+          Something went wrong. Please try again.
+        </div>
       </form>
-    </div>
-  </div>
+    </section>
 
-  <footer>Rate My Admin | Built for teacher voice and workplace transparency</footer>
+    <section class="card">
+      <h2>Approved Reviews</h2>
 
-<script>
-const SUPABASE_URL = "https://ralzsoolkzrtmetpkudr.supabase.co";
-const SUPABASE_KEY = "sb_publishable_6jBBizQoWFQMax-n8NKt3w_z7YgscGm";
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      <div class="grid">
+        <div>
+          <label for="filterState">Filter by State</label>
+          <select id="filterState">
+            <option value="">All states</option>
+          </select>
+        </div>
 
-const districts = [
-"Arkadelphia School District","Bald Knob School District","Bauxite School District","Beebe School District",
-"Benton School District","Bentonville School District","Bismarck School District","Bryant School District",
-"Cabot School District","Camden Fairview School District","Conway School District","Crossett School District",
-"Dardanelle Public Schools","DeQueen School District","Dover School District","El Dorado School District",
-"Farmington School District","Fayetteville School District","Fort Smith School District","Greenbrier School District",
-"Greenwood School District","Harrison School District","Heber Springs School District","Hope School District",
-"Hot Springs School District","Jacksonville North Pulaski School District","Jonesboro School District",
-"Lake Hamilton School District","Lakeside School District","Little Rock School District","Magnolia School District",
-"Malvern School District","Mena School District","Monticello School District","Mountain Home School District",
-"North Little Rock School District","Nettleton School District","Paragould School District","Pine Bluff School District",
-"Pulaski County Special School District","Rogers School District","Russellville School District","Searcy School District",
-"Sheridan School District","Springdale School District","Stuttgart Public Schools","Texarkana Arkansas Schools",
-"Van Buren School District","Vilonia School District","Watson Chapel School District","White Hall School District",
-"West Memphis School District","Wynne School District"
-].sort();
-
-let approvedReviews = [];
-
-function fillDistrictDropdowns() {
-  const districtSelects = [document.getElementById("district_name"), document.getElementById("districtFilter")];
-
-  districtSelects.forEach(select => {
-    select.innerHTML = '<option value="">Select a district</option>';
-    districts.forEach(d => {
-      const option = document.createElement("option");
-      option.value = d;
-      option.textContent = d;
-      select.appendChild(option);
-    });
-  });
-}
-
-function escapeHTML(text) {
-  return String(text || "").replace(/[&<>"']/g, m => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-  }[m]));
-}
-
-async function loadReviews() {
-  const { data, error } = await client
-    .from("reviews")
-    .select("*")
-    .eq("approved", true)
-    .eq("moderation_status", "approved");
-
-  if (error) {
-    document.getElementById("reviewsList").innerHTML = "<p>Could not load reviews.</p>";
-    return;
-  }
-
-  approvedReviews = data || [];
-}
-
-function loadSchoolsForDistrict() {
-  const district = document.getElementById("districtFilter").value;
-  const schoolFilter = document.getElementById("schoolFilter");
-  schoolFilter.innerHTML = '<option value="">Select a school</option>';
-  document.getElementById("reviewsList").innerHTML = "";
-
-  const schools = [...new Set(
-    approvedReviews
-      .filter(r => r.district_name === district)
-      .map(r => r.school_name)
-  )].sort((a,b) => a.localeCompare(b));
-
-  schools.forEach(school => {
-    const option = document.createElement("option");
-    option.value = school;
-    option.textContent = school;
-    schoolFilter.appendChild(option);
-  });
-
-  if (schools.length === 0 && district) {
-    document.getElementById("reviewsList").innerHTML = "<p>No approved reviews for this district yet.</p>";
-  }
-}
-
-function showReviews() {
-  const district = document.getElementById("districtFilter").value;
-  const school = document.getElementById("schoolFilter").value;
-
-  const reviews = approvedReviews.filter(r => r.district_name === district && r.school_name === school);
-  const reviewsList = document.getElementById("reviewsList");
-
-  if (reviews.length === 0) {
-    reviewsList.innerHTML = "<p>No approved reviews yet.</p>";
-    return;
-  }
-
-  reviewsList.innerHTML = reviews.map(r => {
-    const avg = ((r.support_rating + r.communication_rating + r.fairness_rating + r.climate_rating + r.workload_rating) / 5).toFixed(1);
-    const stars = "★★★★★".slice(0, Math.round(avg)) + "☆☆☆☆☆".slice(Math.round(avg));
-
-    return `
-      <div class="card">
-        <h3>${escapeHTML(r.school_name)}</h3>
-        <p class="small">${escapeHTML(r.district_name)}</p>
-        <p><strong>${escapeHTML(r.admin_role)}:</strong> ${escapeHTML(r.admin_first_name)} ${escapeHTML(r.admin_last_name)}</p>
-        <p class="rating">${stars}</p>
-        <p><strong>Overall:</strong> ${avg}/5</p>
-        <p><strong>Support:</strong> ${r.support_rating}/5 | <strong>Communication:</strong> ${r.communication_rating}/5 | <strong>Fairness:</strong> ${r.fairness_rating}/5</p>
-        <p><strong>Climate:</strong> ${r.climate_rating}/5 | <strong>Workload Respect:</strong> ${r.workload_rating}/5</p>
-        <p><em>“${escapeHTML(r.written_review)}”</em></p>
-        <p class="small">Reviewer: ${escapeHTML(r.reviewer_role)} | Relationship: ${escapeHTML(r.relationship_to_school)} | Years: ${escapeHTML(r.years_worked_there || "Not listed")}</p>
-        <p class="small">Would work here again: ${r.would_work_again ? "Yes" : "No"}</p>
+        <div>
+          <label for="searchBox">Search</label>
+          <input id="searchBox" placeholder="Search district, school, or admin name" />
+        </div>
       </div>
-    `;
-  }).join("");
-}
 
-document.getElementById("districtFilter").addEventListener("change", loadSchoolsForDistrict);
-document.getElementById("schoolFilter").addEventListener("change", showReviews);
+      <div id="reviewsContainer"></div>
+    </section>
+  </main>
 
-document.getElementById("reviewForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
+  <footer>
+    Rate My Admin | Reviews are moderated before public posting.
+  </footer>
 
-  const review = {
-    district_name: document.getElementById("district_name").value,
-    school_name: document.getElementById("school_name").value.trim(),
-    admin_first_name: document.getElementById("admin_first_name").value.trim(),
-    admin_last_name: document.getElementById("admin_last_name").value.trim(),
-    admin_role: document.getElementById("admin_role").value,
-    reviewer_role: document.getElementById("reviewer_role").value,
-    relationship_to_school: document.getElementById("relationship_to_school").value,
-    years_worked_there: document.getElementById("years_worked_there").value.trim(),
-    support_rating: Number(document.getElementById("support_rating").value),
-    communication_rating: Number(document.getElementById("communication_rating").value),
-    fairness_rating: Number(document.getElementById("fairness_rating").value),
-    climate_rating: Number(document.getElementById("climate_rating").value),
-    workload_rating: Number(document.getElementById("workload_rating").value),
-    would_work_again: document.getElementById("would_work_again").value === "true",
-    written_review: document.getElementById("written_review").value.trim(),
-    approved: false,
-    moderation_status: "pending"
-  };
+  <script>
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-  const { error } = await client.from("reviews").insert([review]);
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  if (error) {
-    document.getElementById("message").innerText = "Something went wrong: " + error.message;
-  } else {
-    document.getElementById("message").innerText = "Review submitted! It is pending moderation.";
-    document.getElementById("reviewForm").reset();
-  }
-});
+    const states = [
+      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+      "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+      "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+      "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+      "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+      "New Hampshire", "New Jersey", "New Mexico", "New York",
+      "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+      "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+      "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+      "West Virginia", "Wisconsin", "Wyoming"
+    ];
 
-fillDistrictDropdowns();
-loadReviews();
-</script>
+    const stateSelect = document.getElementById("state");
+    const filterState = document.getElementById("filterState");
+    const reviewForm = document.getElementById("reviewForm");
+    const reviewsContainer = document.getElementById("reviewsContainer");
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+    const searchBox = document.getElementById("searchBox");
+    const districtList = document.getElementById("districtList");
+    const schoolList = document.getElementById("schoolList");
+
+    let allReviews = [];
+
+    function loadStates() {
+      states.forEach(state => {
+        const option1 = document.createElement("option");
+        option1.value = state;
+        option1.textContent = state;
+        stateSelect.appendChild(option1);
+
+        const option2 = document.createElement("option");
+        option2.value = state;
+        option2.textContent = state;
+        filterState.appendChild(option2);
+      });
+    }
+
+    async function submitReview(event) {
+      event.preventDefault();
+
+      successMessage.style.display = "none";
+      errorMessage.style.display = "none";
+
+      const reviewData = {
+        state: document.getElementById("state").value.trim(),
+        district_name: document.getElementById("district_name").value.trim(),
+        school_name: document.getElementById("school_name").value.trim(),
+        admin_first_name: document.getElementById("admin_first_name").value.trim(),
+        admin_last_name: document.getElementById("admin_last_name").value.trim(),
+        reviewer_role: document.getElementById("reviewer_role").value,
+        years_known: document.getElementById("years_known").value.trim(),
+        rating: Number(document.getElementById("rating").value),
+        review_text: document.getElementById("review_text").value.trim(),
+        status: "pending"
+      };
+
+      const { error } = await client
+        .from("reviews")
+        .insert([reviewData]);
+
+      if (error) {
+        console.error(error);
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      reviewForm.reset();
+      successMessage.style.display = "block";
+      loadApprovedReviews();
+    }
+
+    async function loadApprovedReviews() {
+      const { data, error } = await client
+        .from("reviews")
+        .select("*")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        reviewsContainer.innerHTML = "<p>Reviews could not be loaded.</p>";
+        return;
+      }
+
+      allReviews = data || [];
+      updateDatalists();
+      renderReviews();
+    }
+
+    function updateDatalists() {
+      const districts = [...new Set(allReviews.map(r => r.district_name).filter(Boolean))];
+      const schools = [...new Set(allReviews.map(r => r.school_name).filter(Boolean))];
+
+      districtList.innerHTML = "";
+      schoolList.innerHTML = "";
+
+      districts.forEach(district => {
+        const option = document.createElement("option");
+        option.value = district;
+        districtList.appendChild(option);
+      });
+
+      schools.forEach(school => {
+        const option = document.createElement("option");
+        option.value = school;
+        schoolList.appendChild(option);
+      });
+    }
+
+    function renderReviews() {
+      const selectedState = filterState.value;
+      const searchTerm = searchBox.value.toLowerCase();
+
+      const filteredReviews = allReviews.filter(review => {
+        const matchesState = !selectedState || review.state === selectedState;
+
+        const searchableText = `
+          ${review.district_name}
+          ${review.school_name}
+          ${review.admin_first_name}
+          ${review.admin_last_name}
+          ${review.reviewer_role}
+        `.toLowerCase();
+
+        const matchesSearch = searchableText.includes(searchTerm);
+
+        return matchesState && matchesSearch;
+      });
+
+      if (filteredReviews.length === 0) {
+        reviewsContainer.innerHTML = "<p>No approved reviews found yet.</p>";
+        return;
+      }
+
+      reviewsContainer.innerHTML = filteredReviews.map(review => `
+        <div class="review">
+          <h3>${escapeHTML(review.admin_first_name)} ${escapeHTML(review.admin_last_name)}</h3>
+          <p><strong>School:</strong> ${escapeHTML(review.school_name)}</p>
+          <p><strong>District:</strong> ${escapeHTML(review.district_name)}, ${escapeHTML(review.state)}</p>
+          <p><strong>Reviewer:</strong> ${escapeHTML(review.reviewer_role)}</p>
+          <p><strong>Years Known:</strong> ${escapeHTML(review.years_known || "Not provided")}</p>
+          <p class="stars">Rating: ${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</p>
+          <p>${escapeHTML(review.review_text)}</p>
+          <p class="small">Submitted: ${new Date(review.created_at).toLocaleDateString()}</p>
+        </div>
+      `).join("");
+    }
+
+    function escapeHTML(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    reviewForm.addEventListener("submit", submitReview);
+    filterState.addEventListener("change", renderReviews);
+    searchBox.addEventListener("input", renderReviews);
+
+    loadStates();
+    loadApprovedReviews();
+  </script>
 </body>
 </html>
