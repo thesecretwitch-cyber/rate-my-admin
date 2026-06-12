@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,70 +7,81 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    * { box-sizing: border-box; }
+
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #f7f1e8, #eef3ea);
       margin: 0;
-      color: #2f2f2f;
+      color: #2b2238;
+      background: linear-gradient(135deg, #f5ecff 0%, #e9fff3 55%, #f7f1ff 100%);
+      min-height: 100vh;
     }
 
     header {
-      background: linear-gradient(135deg, #283618, #606c38);
+      background: linear-gradient(135deg, #b388ff 0%, #cdb4db 45%, #95d5b2 100%);
       color: white;
-      padding: 55px 20px;
+      padding: 70px 20px 95px;
       text-align: center;
+      box-shadow: 0 10px 30px rgba(86, 55, 130, 0.22);
     }
 
     header h1 {
       margin: 0;
-      font-size: 3rem;
+      font-size: 3.4rem;
       letter-spacing: 1px;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.16);
     }
 
     header p {
-      max-width: 760px;
-      margin: 15px auto 0;
-      font-size: 1.1rem;
-      line-height: 1.6;
+      max-width: 780px;
+      margin: 18px auto 0;
+      font-size: 1.12rem;
+      line-height: 1.7;
     }
 
     main {
-      max-width: 1050px;
-      margin: -25px auto 35px;
+      max-width: 1120px;
+      margin: -55px auto 40px;
       padding: 0 18px;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 22px;
-      padding: 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-      border: 1px solid rgba(96,108,56,0.15);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(14px);
+      border-radius: 26px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 14px 35px rgba(86, 55, 130, 0.16);
+      border: 1px solid rgba(255,255,255,0.75);
     }
 
     h2 {
       margin-top: 0;
-      color: #283618;
-      font-size: 1.8rem;
+      color: #7b2cbf;
+      font-size: 1.9rem;
     }
 
     label {
       display: block;
-      margin-top: 14px;
+      margin-top: 15px;
       font-weight: 700;
-      color: #34401f;
+      color: #3c2a4d;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 13px;
-      margin-top: 6px;
-      border-radius: 12px;
-      border: 1px solid #c8c2b8;
+      padding: 14px;
+      margin-top: 7px;
+      border-radius: 14px;
+      border: 1px solid #d8c6ed;
       font-size: 1rem;
-      box-sizing: border-box;
-      background: #fffdf9;
+      background: rgba(255,255,255,0.96);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #9d4edd;
+      box-shadow: 0 0 0 4px rgba(157, 78, 221, 0.15);
     }
 
     textarea {
@@ -80,15 +90,20 @@
     }
 
     button {
-      background: linear-gradient(135deg, #606c38, #283618);
+      background: linear-gradient(135deg, #9d4edd, #74c69d);
       color: white;
       border: none;
-      padding: 14px 22px;
-      margin-top: 20px;
-      border-radius: 14px;
+      padding: 15px 24px;
+      margin-top: 22px;
+      border-radius: 16px;
       font-size: 1rem;
-      font-weight: bold;
+      font-weight: 800;
       cursor: pointer;
+      box-shadow: 0 8px 20px rgba(157, 78, 221, 0.28);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
     }
 
     .grid {
@@ -97,54 +112,81 @@
       gap: 18px;
     }
 
-    .review {
-      border-left: 6px solid #bc6c25;
-      padding: 18px;
-      margin-top: 18px;
-      background: #fffaf2;
-      border-radius: 14px;
-    }
-
-    .stars {
-      color: #bc6c25;
-      font-weight: bold;
-    }
-
     .small {
       font-size: 0.94rem;
-      color: #5f5f5f;
+      color: #5f5f6b;
       line-height: 1.5;
     }
 
-    .success {
-      background: #e8f5e9;
-      color: #1b5e20;
-      padding: 13px;
-      border-radius: 12px;
+    .success, .error {
+      padding: 18px;
+      border-radius: 18px;
       display: none;
-      margin-top: 14px;
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    .success {
+      background: #f0fff4;
+      color: #1b5e20;
+      border: 2px solid #95d5b2;
     }
 
     .error {
-      background: #fde8e8;
+      background: #fff0f3;
       color: #842029;
-      padding: 13px;
-      border-radius: 12px;
+      border: 2px solid #ffccd5;
+    }
+
+    .principal-card {
+      background: rgba(255,255,255,0.96);
+      border-left: 7px solid #9d4edd;
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 16px;
+      box-shadow: 0 7px 20px rgba(86, 55, 130, 0.12);
+    }
+
+    .principal-name {
+      color: #7b2cbf;
+      font-size: 1.25rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .stars {
+      color: #ff9f1c;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .review-detail {
       display: none;
       margin-top: 14px;
+      padding: 14px;
+      background: #fbf7ff;
+      border-radius: 14px;
+      border: 1px solid #e4d4f4;
+    }
+
+    .review-text {
+      margin-top: 8px;
+      line-height: 1.55;
     }
 
     footer {
       text-align: center;
-      padding: 28px;
+      padding: 30px;
       font-size: 0.9rem;
-      color: #555;
+      color: #5f5f6b;
     }
 
     @media (max-width: 700px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+      header h1 { font-size: 2.4rem; }
+      .grid { grid-template-columns: 1fr; }
+      .card { padding: 23px; }
     }
   </style>
 </head>
@@ -161,10 +203,6 @@
   <main>
     <section class="card">
       <h2>Submit a Review</h2>
-      <p class="small">
-        Select your state, then enter your district and school. Once submitted, that district and school
-        will be saved into the site database for future use.
-      </p>
 
       <form id="reviewForm">
         <div class="grid">
@@ -191,13 +229,13 @@
         <div class="grid">
           <div>
             <label for="district_name">School District</label>
-            <input id="district_name" list="districtList" placeholder="Example: Little Rock School District" required />
+            <input id="district_name" list="districtList" required />
             <datalist id="districtList"></datalist>
           </div>
 
           <div>
             <label for="school_name">School Name</label>
-            <input id="school_name" list="schoolList" placeholder="Example: Bale Elementary School" required />
+            <input id="school_name" list="schoolList" required />
             <datalist id="schoolList"></datalist>
           </div>
         </div>
@@ -233,13 +271,14 @@
           </div>
         </div>
 
-        <label for="review_text">Review</label>
-        <textarea id="review_text" placeholder="Share your experience respectfully and honestly." required></textarea>
+        <label for="review_text">Written Review</label>
+        <textarea id="review_text" required></textarea>
 
         <button type="submit">Submit Review</button>
 
         <div id="successMessage" class="success">
-          Thank you! Your review has been submitted and is pending approval.
+          <strong>Review Submitted!</strong><br>
+          Your review is pending approval before it appears publicly.
         </div>
 
         <div id="errorMessage" class="error">
@@ -249,23 +288,27 @@
     </section>
 
     <section class="card">
-      <h2>Approved Reviews</h2>
+      <h2>Find Reviews</h2>
+      <p class="small">
+        Select or type a district to see principals reviewed in that district. Add a school to narrow the results.
+        Click a principal’s name to see all reviews connected to that principal.
+      </p>
 
       <div class="grid">
         <div>
-          <label for="filterState">Filter by State</label>
-          <select id="filterState">
-            <option value="">All states</option>
-          </select>
+          <label for="filterDistrict">District</label>
+          <input id="filterDistrict" list="districtList" placeholder="Start typing a district" />
         </div>
 
         <div>
-          <label for="searchBox">Search</label>
-          <input id="searchBox" placeholder="Search district, school, or admin name" />
+          <label for="filterSchool">School</label>
+          <input id="filterSchool" list="schoolList" placeholder="Optional: narrow by school" />
         </div>
       </div>
 
-      <div id="reviewsContainer"></div>
+      <div id="reviewsContainer">
+        <p class="small">Enter a district above to view reviews.</p>
+      </div>
     </section>
   </main>
 
@@ -293,28 +336,32 @@
     ];
 
     const stateSelect = document.getElementById("state");
-    const filterState = document.getElementById("filterState");
     const reviewForm = document.getElementById("reviewForm");
     const reviewsContainer = document.getElementById("reviewsContainer");
     const successMessage = document.getElementById("successMessage");
     const errorMessage = document.getElementById("errorMessage");
-    const searchBox = document.getElementById("searchBox");
     const districtList = document.getElementById("districtList");
     const schoolList = document.getElementById("schoolList");
+    const filterDistrict = document.getElementById("filterDistrict");
+    const filterSchool = document.getElementById("filterSchool");
 
     let allReviews = [];
 
+    function escapeHTML(text) {
+      return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function loadStates() {
       states.forEach(state => {
-        const option1 = document.createElement("option");
-        option1.value = state;
-        option1.textContent = state;
-        stateSelect.appendChild(option1);
-
-        const option2 = document.createElement("option");
-        option2.value = state;
-        option2.textContent = state;
-        filterState.appendChild(option2);
+        const option = document.createElement("option");
+        option.value = state;
+        option.textContent = state;
+        stateSelect.appendChild(option);
       });
     }
 
@@ -337,9 +384,7 @@
         status: "pending"
       };
 
-      const { error } = await client
-        .from("reviews")
-        .insert([reviewData]);
+      const { error } = await client.from("reviews").insert([reviewData]);
 
       if (error) {
         console.error(error);
@@ -349,10 +394,10 @@
 
       reviewForm.reset();
       successMessage.style.display = "block";
-      loadApprovedReviews();
+      loadReviews();
     }
 
-    async function loadApprovedReviews() {
+    async function loadReviews() {
       const { data, error } = await client
         .from("reviews")
         .select("*")
@@ -361,7 +406,7 @@
 
       if (error) {
         console.error(error);
-        reviewsContainer.innerHTML = "<p>Reviews could not be loaded.</p>";
+        reviewsContainer.innerHTML = "<p class='small'>Reviews could not be loaded.</p>";
         return;
       }
 
@@ -391,60 +436,86 @@
     }
 
     function renderReviews() {
-      const selectedState = filterState.value;
-      const searchTerm = searchBox.value.toLowerCase();
+      const districtTerm = filterDistrict.value.trim().toLowerCase();
+      const schoolTerm = filterSchool.value.trim().toLowerCase();
 
-      const filteredReviews = allReviews.filter(review => {
-        const matchesState = !selectedState || review.state === selectedState;
-
-        const searchableText = `
-          ${review.district_name}
-          ${review.school_name}
-          ${review.admin_first_name}
-          ${review.admin_last_name}
-          ${review.reviewer_role}
-        `.toLowerCase();
-
-        const matchesSearch = searchableText.includes(searchTerm);
-
-        return matchesState && matchesSearch;
-      });
-
-      if (filteredReviews.length === 0) {
-        reviewsContainer.innerHTML = "<p>No approved reviews found yet.</p>";
+      if (!districtTerm) {
+        reviewsContainer.innerHTML = "<p class='small'>Enter a district above to view reviews.</p>";
         return;
       }
 
-      reviewsContainer.innerHTML = filteredReviews.map(review => `
-        <div class="review">
-          <h3>${escapeHTML(review.admin_first_name)} ${escapeHTML(review.admin_last_name)}</h3>
-          <p><strong>School:</strong> ${escapeHTML(review.school_name)}</p>
-          <p><strong>District:</strong> ${escapeHTML(review.district_name)}, ${escapeHTML(review.state)}</p>
-          <p><strong>Reviewer:</strong> ${escapeHTML(review.reviewer_role)}</p>
-          <p><strong>Years Known:</strong> ${escapeHTML(review.years_known || "Not provided")}</p>
-          <p class="stars">Rating: ${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</p>
-          <p>${escapeHTML(review.review_text)}</p>
-          <p class="small">Submitted: ${new Date(review.created_at).toLocaleDateString()}</p>
-        </div>
-      `).join("");
+      const filtered = allReviews.filter(review => {
+        const districtMatch = (review.district_name || "").toLowerCase().includes(districtTerm);
+        const schoolMatch = !schoolTerm || (review.school_name || "").toLowerCase().includes(schoolTerm);
+        return districtMatch && schoolMatch;
+      });
+
+      if (filtered.length === 0) {
+        reviewsContainer.innerHTML = "<p class='small'>No reviews found for that district or school yet.</p>";
+        return;
+      }
+
+      const principals = {};
+
+      filtered.forEach(review => {
+        const key = `${review.admin_first_name || ""} ${review.admin_last_name || ""}`.trim().toLowerCase();
+
+        if (!principals[key]) {
+          principals[key] = {
+            first: review.admin_first_name,
+            last: review.admin_last_name,
+            reviews: []
+          };
+        }
+
+        principals[key].reviews.push(review);
+      });
+
+      reviewsContainer.innerHTML = Object.values(principals).map((principal, index) => {
+        const linkedReviews = allReviews.filter(r =>
+          `${r.admin_first_name || ""} ${r.admin_last_name || ""}`.trim().toLowerCase() ===
+          `${principal.first || ""} ${principal.last || ""}`.trim().toLowerCase()
+        );
+
+        const averageRating = (
+          linkedReviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / linkedReviews.length
+        ).toFixed(1);
+
+        const details = linkedReviews.map(r => `
+          <div class="review-detail-item">
+            <p><strong>${escapeHTML(r.school_name)}</strong> | ${escapeHTML(r.district_name)}, ${escapeHTML(r.state)}</p>
+            <p class="stars">Rating: ${"★".repeat(Number(r.rating || 0))}${"☆".repeat(5 - Number(r.rating || 0))}</p>
+            <p class="review-text">${escapeHTML(r.review_text || r.review || r.comment || "No written review provided.")}</p>
+            <p class="small">Reviewer: ${escapeHTML(r.reviewer_role)} | Years Known: ${escapeHTML(r.years_known || "Not provided")}</p>
+          </div>
+        `).join("<hr>");
+
+        return `
+          <div class="principal-card">
+            <div class="principal-name" onclick="toggleReviews(${index})">
+              ${escapeHTML(principal.first)} ${escapeHTML(principal.last)}
+            </div>
+            <p class="small">${linkedReviews.length} linked review(s) across all schools/districts</p>
+            <p class="stars">Average Rating: ${averageRating} / 5</p>
+            <div id="principalReviews${index}" class="review-detail">
+              ${details}
+            </div>
+          </div>
+        `;
+      }).join("");
     }
 
-    function escapeHTML(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    function toggleReviews(index) {
+      const section = document.getElementById(`principalReviews${index}`);
+      section.style.display = section.style.display === "block" ? "none" : "block";
     }
 
     reviewForm.addEventListener("submit", submitReview);
-    filterState.addEventListener("change", renderReviews);
-    searchBox.addEventListener("input", renderReviews);
+    filterDistrict.addEventListener("input", renderReviews);
+    filterSchool.addEventListener("input", renderReviews);
 
     loadStates();
-    loadApprovedReviews();
+    loadReviews();
   </script>
 </body>
 </html>
-```
