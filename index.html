@@ -356,6 +356,14 @@
         .replaceAll("'", "&#039;");
     }
 
+    function getReviewText(review) {
+      return review.review_text || review.written_review || review.review || review.comment || "No written review provided.";
+    }
+
+    function getRating(review) {
+      return Number(review.rating || review.support_rating || review.overall_rating || 0);
+    }
+
     function loadStates() {
       states.forEach(state => {
         const option = document.createElement("option");
@@ -401,7 +409,7 @@
       const { data, error } = await client
         .from("reviews")
         .select("*")
-        .eq("status", "approved")
+        .or("status.eq.approved,approved.eq.true,moderation_status.eq.approved")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -458,12 +466,13 @@
       const principals = {};
 
       filtered.forEach(review => {
-        const key = `${review.admin_first_name || ""} ${review.admin_last_name || ""}`.trim().toLowerCase();
+        const fullName = `${review.admin_first_name || ""} ${review.admin_last_name || ""}`.trim();
+        const key = fullName.toLowerCase() || `unknown-${review.id}`;
 
         if (!principals[key]) {
           principals[key] = {
-            first: review.admin_first_name,
-            last: review.admin_last_name,
+            first: review.admin_first_name || "Unknown",
+            last: review.admin_last_name || "Administrator",
             reviews: []
           };
         }
@@ -472,23 +481,32 @@
       });
 
       reviewsContainer.innerHTML = Object.values(principals).map((principal, index) => {
-        const linkedReviews = allReviews.filter(r =>
-          `${r.admin_first_name || ""} ${r.admin_last_name || ""}`.trim().toLowerCase() ===
-          `${principal.first || ""} ${principal.last || ""}`.trim().toLowerCase()
-        );
+        const linkedReviews = allReviews.filter(r => {
+          const thisName = `${r.admin_first_name || ""} ${r.admin_last_name || ""}`.trim().toLowerCase();
+          const principalName = `${principal.first || ""} ${principal.last || ""}`.trim().toLowerCase();
+          return thisName === principalName;
+        });
 
-        const averageRating = (
-          linkedReviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / linkedReviews.length
-        ).toFixed(1);
+        const validRatings = linkedReviews
+          .map(r => getRating(r))
+          .filter(rating => rating > 0);
 
-        const details = linkedReviews.map(r => `
-          <div class="review-detail-item">
-            <p><strong>${escapeHTML(r.school_name)}</strong> | ${escapeHTML(r.district_name)}, ${escapeHTML(r.state)}</p>
-            <p class="stars">Rating: ${"★".repeat(Number(r.rating || 0))}${"☆".repeat(5 - Number(r.rating || 0))}</p>
-            <p class="review-text">${escapeHTML(r.review_text || r.review || r.comment || "No written review provided.")}</p>
-            <p class="small">Reviewer: ${escapeHTML(r.reviewer_role)} | Years Known: ${escapeHTML(r.years_known || "Not provided")}</p>
-          </div>
-        `).join("<hr>");
+        const averageRating = validRatings.length
+          ? (validRatings.reduce((sum, rating) => sum + rating, 0) / validRatings.length).toFixed(1)
+          : "No rating";
+
+        const details = linkedReviews.map(r => {
+          const rating = getRating(r);
+
+          return `
+            <div class="review-detail-item">
+              <p><strong>${escapeHTML(r.school_name)}</strong> | ${escapeHTML(r.district_name)}, ${escapeHTML(r.state)}</p>
+              <p class="stars">Rating: ${rating > 0 ? "★".repeat(rating) + "☆".repeat(5 - rating) : "No rating provided"}</p>
+              <p class="review-text">${escapeHTML(getReviewText(r))}</p>
+              <p class="small">Reviewer: ${escapeHTML(r.reviewer_role)} | Years Known: ${escapeHTML(r.years_known || r.years_worked_there || "Not provided")}</p>
+            </div>
+          `;
+        }).join("<hr>");
 
         return `
           <div class="principal-card">
@@ -496,7 +514,7 @@
               ${escapeHTML(principal.first)} ${escapeHTML(principal.last)}
             </div>
             <p class="small">${linkedReviews.length} linked review(s) across all schools/districts</p>
-            <p class="stars">Average Rating: ${averageRating} / 5</p>
+            <p class="stars">Average Rating: ${averageRating}${averageRating !== "No rating" ? " / 5" : ""}</p>
             <div id="principalReviews${index}" class="review-detail">
               ${details}
             </div>
