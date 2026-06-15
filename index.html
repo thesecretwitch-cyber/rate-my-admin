@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -33,7 +34,7 @@
     }
 
     header p {
-      max-width: 780px;
+      max-width: 790px;
       margin: 18px auto 0;
       font-size: 1.12rem;
       line-height: 1.7;
@@ -85,7 +86,7 @@
     }
 
     textarea {
-      min-height: 130px;
+      min-height: 140px;
       resize: vertical;
     }
 
@@ -118,6 +119,17 @@
       line-height: 1.5;
     }
 
+    .warning {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 16px;
+      background: #fff8e8;
+      border: 1px solid #ffd166;
+      color: #5c4512;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
     .success, .error {
       padding: 18px;
       border-radius: 18px;
@@ -138,7 +150,7 @@
       border: 2px solid #ffccd5;
     }
 
-    .principal-card {
+    .person-card {
       background: rgba(255,255,255,0.96);
       border-left: 7px solid #9d4edd;
       border-radius: 18px;
@@ -147,7 +159,7 @@
       box-shadow: 0 7px 20px rgba(86, 55, 130, 0.12);
     }
 
-    .principal-name {
+    .person-name {
       color: #7b2cbf;
       font-size: 1.25rem;
       font-weight: 800;
@@ -171,9 +183,17 @@
       border: 1px solid #e4d4f4;
     }
 
+    .review-detail-item {
+      padding: 10px 0;
+    }
+
     .review-text {
-      margin-top: 8px;
-      line-height: 1.55;
+      margin-top: 12px;
+      line-height: 1.6;
+      background: white;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid #e4d4f4;
     }
 
     footer {
@@ -189,14 +209,15 @@
       .card { padding: 23px; }
     }
   </style>
+
 </head>
 
 <body>
   <header>
     <h1>Rate My Admin</h1>
     <p>
-      A place for teachers, staff, and families to share honest feedback about school leadership,
-      campus culture, communication, transparency, and support.
+      A place for teachers, staff, and families to share factual, professional feedback about school leadership,
+      support roles, campus culture, communication, transparency, and trust.
     </p>
   </header>
 
@@ -204,112 +225,161 @@
     <section class="card">
       <h2>Submit a Review</h2>
 
-      <form id="reviewForm">
-        <div class="grid">
-          <div>
-            <label for="state">State</label>
-            <select id="state" required>
-              <option value="">Select a state</option>
-            </select>
-          </div>
+```
+  <div class="warning">
+    Please keep reviews professional, factual, and non-threatening. Do not include private student information,
+    medical information, threats, harassment, or statements you cannot support with your own experience.
+  </div>
 
-          <div>
-            <label for="reviewer_role">I am a...</label>
-            <select id="reviewer_role" required>
-              <option value="">Select one</option>
-              <option value="Teacher">Teacher</option>
-              <option value="Parent">Parent</option>
-              <option value="Staff Member">Staff Member</option>
-              <option value="Former Employee">Former Employee</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid">
-          <div>
-            <label for="district_name">School District</label>
-            <input id="district_name" list="districtList" required />
-            <datalist id="districtList"></datalist>
-          </div>
-
-          <div>
-            <label for="school_name">School Name</label>
-            <input id="school_name" list="schoolList" required />
-            <datalist id="schoolList"></datalist>
-          </div>
-        </div>
-
-        <div class="grid">
-          <div>
-            <label for="admin_first_name">Administrator First Name</label>
-            <input id="admin_first_name" required />
-          </div>
-
-          <div>
-            <label for="admin_last_name">Administrator Last Name</label>
-            <input id="admin_last_name" required />
-          </div>
-        </div>
-
-        <div class="grid">
-          <div>
-            <label for="years_known">Years Worked With/Known Administrator</label>
-            <input id="years_known" placeholder="Example: 1 year, 3 years, current year" />
-          </div>
-
-          <div>
-            <label for="rating">Overall Rating</label>
-            <select id="rating" required>
-              <option value="">Select rating</option>
-              <option value="5">5 - Excellent</option>
-              <option value="4">4 - Good</option>
-              <option value="3">3 - Average</option>
-              <option value="2">2 - Poor</option>
-              <option value="1">1 - Very Poor</option>
-            </select>
-          </div>
-        </div>
-
-        <label for="review_text">Written Review</label>
-        <textarea id="review_text" required></textarea>
-
-        <button type="submit">Submit Review</button>
-
-        <div id="successMessage" class="success">
-          <strong>Review Submitted!</strong><br>
-          Your review is pending approval before it appears publicly.
-        </div>
-
-        <div id="errorMessage" class="error">
-          Something went wrong. Please try again.
-        </div>
-      </form>
-    </section>
-
-    <section class="card">
-      <h2>Find Reviews</h2>
-      <p class="small">
-        Select or type a district to see principals reviewed in that district. Add a school to narrow the results.
-        Click a principal’s name to see all reviews connected to that principal.
-      </p>
-
-      <div class="grid">
-        <div>
-          <label for="filterDistrict">District</label>
-          <input id="filterDistrict" list="districtList" placeholder="Start typing a district" />
-        </div>
-
-        <div>
-          <label for="filterSchool">School</label>
-          <input id="filterSchool" list="schoolList" placeholder="Optional: narrow by school" />
-        </div>
+  <form id="reviewForm">
+    <div class="grid">
+      <div>
+        <label for="state">State</label>
+        <select id="state" required>
+          <option value="">Select a state</option>
+        </select>
       </div>
 
-      <div id="reviewsContainer">
-        <p class="small">Enter a district above to view reviews.</p>
+      <div>
+        <label for="reviewer_role">You are a...</label>
+        <select id="reviewer_role" required>
+          <option value="">Select one</option>
+          <option value="Current Employee">Current Employee</option>
+          <option value="Former Employee">Former Employee</option>
+          <option value="Parent">Parent</option>
+          <option value="Support Staff">Support Staff</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
-    </section>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label for="district_name">School District</label>
+        <input id="district_name" list="districtList" placeholder="Example: Conway School District" required />
+        <datalist id="districtList"></datalist>
+      </div>
+
+      <div>
+        <label for="school_name">School</label>
+        <input id="school_name" list="schoolList" placeholder="Example: Ida Burns Elementary" required />
+        <datalist id="schoolList"></datalist>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label for="staff_role">Person/Role Being Reviewed</label>
+        <select id="staff_role" required>
+          <option value="">Select one</option>
+          <option value="Principal">Principal</option>
+          <option value="Assistant Principal">Assistant Principal</option>
+          <option value="Instructional Coach / Instructional Lead Teacher">Instructional Coach / Instructional Lead Teacher</option>
+          <option value="Dean of Students">Dean of Students</option>
+          <option value="Counselor">Counselor</option>
+          <option value="Bookkeeper">Bookkeeper</option>
+          <option value="Secretary / Office Staff">Secretary / Office Staff</option>
+          <option value="Principal's Secretary">Principal's Secretary</option>
+          <option value="Other Administrator or Staff Member">Other Administrator or Staff Member</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="staff_name">First and Last Name Optional</label>
+        <input id="staff_name" placeholder="Example: Jane Smith" />
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label for="years_known">Years Known / Worked With</label>
+        <input id="years_known" placeholder="Example: 1 year, 3 years, current year" />
+      </div>
+
+      <div>
+        <label for="rating">Overall Rating</label>
+        <select id="rating" required>
+          <option value="">Select rating</option>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Very Poor</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="would_work_again">Would you work with/for this person again?</label>
+    <select id="would_work_again" required>
+      <option value="">Select one</option>
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+    </select>
+
+    <label for="review_text">Review</label>
+    <textarea id="review_text" placeholder="Use factual, professional, non-threatening language." required></textarea>
+
+    <button type="submit">Submit Review</button>
+
+    <div id="successMessage" class="success">
+      <strong>Review Submitted!</strong><br>
+      Your review is pending approval before it appears publicly.
+    </div>
+
+    <div id="errorMessage" class="error">
+      Something went wrong. Please try again.
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Find Reviews</h2>
+  <p class="small">
+    Type a district to see reviewed staff in that district. Add a school to narrow the results.
+    Click a name or role to see reviews.
+  </p>
+
+  <div class="grid">
+    <div>
+      <label for="filterDistrict">District</label>
+      <input id="filterDistrict" list="districtList" placeholder="Start typing a district" />
+    </div>
+
+    <div>
+      <label for="filterSchool">School</label>
+      <input id="filterSchool" list="schoolList" placeholder="Optional: narrow by school" />
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label for="filterRole">Role</label>
+      <select id="filterRole">
+        <option value="">All roles</option>
+        <option value="Principal">Principal</option>
+        <option value="Assistant Principal">Assistant Principal</option>
+        <option value="Instructional Coach / Instructional Lead Teacher">Instructional Coach / Instructional Lead Teacher</option>
+        <option value="Dean of Students">Dean of Students</option>
+        <option value="Counselor">Counselor</option>
+        <option value="Bookkeeper">Bookkeeper</option>
+        <option value="Secretary / Office Staff">Secretary / Office Staff</option>
+        <option value="Principal's Secretary">Principal's Secretary</option>
+        <option value="Other Administrator or Staff Member">Other Administrator or Staff Member</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="filterName">Name Search</label>
+      <input id="filterName" placeholder="Optional: search by name" />
+    </div>
+  </div>
+
+  <div id="reviewsContainer">
+    <p class="small">Enter a district above to view reviews.</p>
+  </div>
+</section>
+```
+
   </main>
 
   <footer>
@@ -344,6 +414,8 @@
     const schoolList = document.getElementById("schoolList");
     const filterDistrict = document.getElementById("filterDistrict");
     const filterSchool = document.getElementById("filterSchool");
+    const filterRole = document.getElementById("filterRole");
+    const filterName = document.getElementById("filterName");
 
     let allReviews = [];
 
@@ -356,12 +428,28 @@
         .replaceAll("'", "&#039;");
     }
 
-    function getReviewText(review) {
-      return review.review_text || review.written_review || review.review || review.comment || "No written review provided.";
+    function normalize(text) {
+      return String(text || "").trim().toLowerCase();
     }
 
-    function getRating(review) {
-      return Number(review.rating || review.support_rating || review.overall_rating || 0);
+    function stars(rating) {
+      const number = Number(rating || 0);
+      if (!number) return "No rating provided";
+      return "★".repeat(number) + "☆".repeat(5 - number);
+    }
+
+    function groupKey(review) {
+      if (review.staff_name && review.staff_name.trim()) {
+        return normalize(review.staff_name);
+      }
+      return `${normalize(review.staff_role)}|${normalize(review.school_name)}|${normalize(review.district_name)}`;
+    }
+
+    function displayName(review) {
+      if (review.staff_name && review.staff_name.trim()) {
+        return review.staff_name;
+      }
+      return review.staff_role;
     }
 
     function loadStates() {
@@ -383,16 +471,17 @@
         state: document.getElementById("state").value.trim(),
         district_name: document.getElementById("district_name").value.trim(),
         school_name: document.getElementById("school_name").value.trim(),
-        admin_first_name: document.getElementById("admin_first_name").value.trim(),
-        admin_last_name: document.getElementById("admin_last_name").value.trim(),
+        staff_role: document.getElementById("staff_role").value,
+        staff_name: document.getElementById("staff_name").value.trim() || null,
         reviewer_role: document.getElementById("reviewer_role").value,
         years_known: document.getElementById("years_known").value.trim(),
         rating: Number(document.getElementById("rating").value),
+        would_work_again: document.getElementById("would_work_again").value === "true",
         review_text: document.getElementById("review_text").value.trim(),
         status: "pending"
       };
 
-      const { error } = await client.from("reviews").insert([reviewData]);
+      const { error } = await client.from("rma_reviews").insert([reviewData]);
 
       if (error) {
         console.error(error);
@@ -407,9 +496,9 @@
 
     async function loadReviews() {
       const { data, error } = await client
-        .from("reviews")
+        .from("rma_reviews")
         .select("*")
-        .or("status.eq.approved,approved.eq.true,moderation_status.eq.approved")
+        .eq("status", "approved")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -444,8 +533,10 @@
     }
 
     function renderReviews() {
-      const districtTerm = filterDistrict.value.trim().toLowerCase();
-      const schoolTerm = filterSchool.value.trim().toLowerCase();
+      const districtTerm = normalize(filterDistrict.value);
+      const schoolTerm = normalize(filterSchool.value);
+      const roleTerm = filterRole.value;
+      const nameTerm = normalize(filterName.value);
 
       if (!districtTerm) {
         reviewsContainer.innerHTML = "<p class='small'>Enter a district above to view reviews.</p>";
@@ -453,9 +544,12 @@
       }
 
       const filtered = allReviews.filter(review => {
-        const districtMatch = (review.district_name || "").toLowerCase().includes(districtTerm);
-        const schoolMatch = !schoolTerm || (review.school_name || "").toLowerCase().includes(schoolTerm);
-        return districtMatch && schoolMatch;
+        const districtMatch = normalize(review.district_name).includes(districtTerm);
+        const schoolMatch = !schoolTerm || normalize(review.school_name).includes(schoolTerm);
+        const roleMatch = !roleTerm || review.staff_role === roleTerm;
+        const nameMatch = !nameTerm || normalize(review.staff_name).includes(nameTerm);
+
+        return districtMatch && schoolMatch && roleMatch && nameMatch;
       });
 
       if (filtered.length === 0) {
@@ -463,59 +557,58 @@
         return;
       }
 
-      const principals = {};
+      const groups = {};
 
       filtered.forEach(review => {
-        const fullName = `${review.admin_first_name || ""} ${review.admin_last_name || ""}`.trim();
-        const key = fullName.toLowerCase() || `unknown-${review.id}`;
+        const key = groupKey(review);
 
-        if (!principals[key]) {
-          principals[key] = {
-            first: review.admin_first_name || "Unknown",
-            last: review.admin_last_name || "Administrator",
+        if (!groups[key]) {
+          groups[key] = {
+            name: displayName(review),
+            role: review.staff_role,
             reviews: []
           };
         }
 
-        principals[key].reviews.push(review);
+        groups[key].reviews.push(review);
       });
 
-      reviewsContainer.innerHTML = Object.values(principals).map((principal, index) => {
-        const linkedReviews = allReviews.filter(r => {
-          const thisName = `${r.admin_first_name || ""} ${r.admin_last_name || ""}`.trim().toLowerCase();
-          const principalName = `${principal.first || ""} ${principal.last || ""}`.trim().toLowerCase();
-          return thisName === principalName;
-        });
+      reviewsContainer.innerHTML = Object.values(groups).map((group, index) => {
+        const linkedReviews = group.name && group.name !== group.role
+          ? allReviews.filter(r => normalize(r.staff_name) === normalize(group.name))
+          : group.reviews;
 
-        const validRatings = linkedReviews
-          .map(r => getRating(r))
-          .filter(rating => rating > 0);
-
-        const averageRating = validRatings.length
-          ? (validRatings.reduce((sum, rating) => sum + rating, 0) / validRatings.length).toFixed(1)
+        const ratings = linkedReviews.map(r => Number(r.rating)).filter(r => r > 0);
+        const average = ratings.length
+          ? (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(1)
           : "No rating";
 
-        const details = linkedReviews.map(r => {
-          const rating = getRating(r);
+        const yesCount = linkedReviews.filter(r => r.would_work_again === true).length;
+        const wouldWorkAgainText = linkedReviews.length
+          ? `${yesCount} of ${linkedReviews.length} would work with/for them again`
+          : "No responses yet";
 
-          return `
-            <div class="review-detail-item">
-              <p><strong>${escapeHTML(r.school_name)}</strong> | ${escapeHTML(r.district_name)}, ${escapeHTML(r.state)}</p>
-              <p class="stars">Rating: ${rating > 0 ? "★".repeat(rating) + "☆".repeat(5 - rating) : "No rating provided"}</p>
-              <p class="review-text">${escapeHTML(getReviewText(r))}</p>
-              <p class="small">Reviewer: ${escapeHTML(r.reviewer_role)} | Years Known: ${escapeHTML(r.years_known || r.years_worked_there || "Not provided")}</p>
-            </div>
-          `;
-        }).join("<hr>");
+        const details = linkedReviews.map(r => `
+          <div class="review-detail-item">
+            <p><strong>${escapeHTML(r.school_name)}</strong> | ${escapeHTML(r.district_name)}, ${escapeHTML(r.state)}</p>
+            <p><strong>Role:</strong> ${escapeHTML(r.staff_role)}</p>
+            <p class="stars">Rating: ${stars(r.rating)}</p>
+            <p><strong>Would work with/for again:</strong> ${r.would_work_again ? "Yes" : "No"}</p>
+            <p class="review-text">${escapeHTML(r.review_text)}</p>
+            <p class="small">Reviewer: ${escapeHTML(r.reviewer_role)} | Years Known: ${escapeHTML(r.years_known || "Not provided")}</p>
+          </div>
+        `).join("<hr>");
 
         return `
-          <div class="principal-card">
-            <div class="principal-name" onclick="toggleReviews(${index})">
-              ${escapeHTML(principal.first)} ${escapeHTML(principal.last)}
+          <div class="person-card">
+            <div class="person-name" onclick="toggleReviews(${index})">
+              ${escapeHTML(group.name)}
             </div>
-            <p class="small">${linkedReviews.length} linked review(s) across all schools/districts</p>
-            <p class="stars">Average Rating: ${averageRating}${averageRating !== "No rating" ? " / 5" : ""}</p>
-            <div id="principalReviews${index}" class="review-detail">
+            <p class="small">${escapeHTML(group.role)}</p>
+            <p class="small">${linkedReviews.length} linked review(s)</p>
+            <p class="stars">Average Rating: ${average}${average !== "No rating" ? " / 5" : ""}</p>
+            <p class="small">${escapeHTML(wouldWorkAgainText)}</p>
+            <div id="personReviews${index}" class="review-detail">
               ${details}
             </div>
           </div>
@@ -524,16 +617,19 @@
     }
 
     function toggleReviews(index) {
-      const section = document.getElementById(`principalReviews${index}`);
+      const section = document.getElementById(`personReviews${index}`);
       section.style.display = section.style.display === "block" ? "none" : "block";
     }
 
     reviewForm.addEventListener("submit", submitReview);
     filterDistrict.addEventListener("input", renderReviews);
     filterSchool.addEventListener("input", renderReviews);
+    filterRole.addEventListener("change", renderReviews);
+    filterName.addEventListener("input", renderReviews);
 
     loadStates();
     loadReviews();
   </script>
+
 </body>
 </html>
